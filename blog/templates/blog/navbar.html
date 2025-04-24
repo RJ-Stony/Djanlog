@@ -40,7 +40,20 @@
             aria-haspopup="true"
             aria-expanded="false"
           >
-            {{ user.username }}
+            {% if user.socialaccount_set.all.0.get_avatar_url %}
+            <img
+              class="rounded-circle"
+              width="25px"
+              src="{{ user.socialaccount_set.all.0.get_avatar_url }}"
+              alt=""
+            />
+            {% else %}
+            <img
+              class="rounded-circle"
+              width="25px"
+              src="https://doitdjango.com/avatar/id/2788/359762aeaf91358d/svg/{{ user.email }}"
+            />
+            {% endif %}&nbsp;{{user.username}}
           </a>
           <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
             <a class="dropdown-item" href="/accounts/logout/">로그아웃</a>
