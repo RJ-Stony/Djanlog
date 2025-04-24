@@ -6,6 +6,11 @@
 
 {% block main_area %}
 <div id="post-area">
+  {% if post.category %}
+  <span class="badge badge-secondary float-right">{{ post.category }}</span>
+  {% else %}
+  <span class="badge badge-secondary float-right">미분류</span>
+  {% endif %}
   <!-- Post content-->
   <article>
     <!-- Post header-->
@@ -18,13 +23,6 @@
         {{ post.created }}에 작성되었어요
       </div>
       <p class="lead"><a href="#">{{ post.author | upper }}</a></p>
-      <!-- Post categories-->
-      <a class="badge bg-secondary text-decoration-none link-light" href="#!"
-        >Web Design</a
-      >
-      <a class="badge bg-secondary text-decoration-none link-light" href="#!"
-        >Freebies</a
-      >
     </header>
     <!-- Preview image figure-->
     <figure class="mb-4">
