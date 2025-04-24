@@ -1,3 +1,5 @@
+{% load socialaccount %}
+
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
   <div class="container">
     <a class="navbar-brand" href="/">Django Blog</a>
@@ -25,6 +27,9 @@
         <li class="nav-item">
           <a class="nav-link" href="/about_me/">About Me</a>
         </li>
+      </ul>
+      <ul class="navbar-nav ml-auto">
+        {% if user.is_authenticated %}
         <li class="nav-item dropdown">
           <a
             class="nav-link dropdown-toggle"
@@ -35,25 +40,23 @@
             aria-haspopup="true"
             aria-expanded="false"
           >
-            Dropdown link
+            {{ user.username }}
           </a>
           <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-            <a class="dropdown-item" href="#">Action</a>
-            <a class="dropdown-item" href="#">Another action</a>
-            <a class="dropdown-item" href="#">Something else here</a>
+            <a class="dropdown-item" href="/accounts/logout/">로그아웃</a>
           </div>
         </li>
-      </ul>
-      <ul class="navbar-nav ml-auto">
+        {% else %}
         <li class="nav-item">
           <a
             class="nav-link"
             href="#"
             data-toggle="modal"
             data-target="#loginModal"
-            >Log In</a
+            >로그인</a
           >
         </li>
+        {% endif %}
       </ul>
     </div>
   </div>
@@ -86,17 +89,29 @@
       <div class="modal-body">
         <div class="row">
           <div class="col-md-6">
-            <button type="button" class="btn btn-outline-dark btn-block btn-sm">
-              <i class="fab fa-google"></i>&nbsp&nbsp Log in with Google
-            </button>
-            <button type="button" class="btn btn-outline-dark btn-block btn-sm">
-              <i class="far fa-envelope"></i>&nbsp&nbsp Log in with E-mail
-            </button>
+            <a
+              role="button"
+              class="btn btn-outline-dark btn-block btn-sm"
+              href="{% provider_login_url 'google' %}"
+            >
+              <i class="fab fa-google"></i>&nbsp&nbsp 구글 계정으로 로그인
+            </a>
+            <a
+              role="button"
+              class="btn btn-outline-dark btn-block btn-sm"
+              href="/accounts/login/"
+            >
+              <i class="far fa-envelope"></i>&nbsp&nbsp ID로 로그인
+            </a>
           </div>
           <div class="col-md-6">
-            <button type="button" class="btn btn-outline-dark btn-block btn-sm">
-              <i class="far fa-envelope"></i>&nbsp&nbsp Sign Up with E-mail
-            </button>
+            <a
+              role="button"
+              class="btn btn-outline-dark btn-block btn-sm"
+              href="/accounts/signup/"
+            >
+              <i class="far fa-envelope"></i>&nbsp&nbsp 회원가입
+            </a>
           </div>
         </div>
       </div>
