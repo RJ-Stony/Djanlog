@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+{% load static %}
+<html>
+  <head>
+    <title>{% block header_title %}Blog{% endblock %}</title>
+    <link
+      rel="stylesheet"
+      href="{% static 'blog/bootstrap.min.css' %}"
+      type="text/css"
+      media="screen"
+    />
+
+    <script
+      src="https://kit.fontawesome.com/40a2024947.js"
+      crossorigin="anonymous"
+    ></script>
+  </head>
+
+  <body>
+    {% include 'blog/navbar.html' %}
+
+    <div class="container my-3">
+      <div class="row">
+        <div class="col-12" id="main-area">
+          {% block main_area %} {% endblock %}
+        </div>
+      </div>
+    </div>
+
+    {% include 'blog/footer.html' %}
+  </body>
+</html>
