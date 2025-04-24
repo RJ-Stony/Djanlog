@@ -44,7 +44,16 @@
     <section class="mb-5">
       <p class="fs-5 mb-4">{{ post.content }}</p>
 
-      {% if post.upload %}
+      {% if p.tags.exists %}
+      <i class="fas fa-tags"></i>
+      {% for tag in p.tags.iterator %}
+      <a href="{{ tag.get_absolute_url }}"
+        ><span class="badge badge-pill badge-light">{{ tag }}</span></a
+      >
+      {% endfor %}
+      <br />
+      <br />
+      {% endif %} {% if post.upload %}
       <a
         href="{{ post.upload.url }}"
         class="btn btn-outline-dark"
