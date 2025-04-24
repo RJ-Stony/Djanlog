@@ -126,12 +126,26 @@
       alt=""
     />
     <div class="media-body">
+      {% if user.is_authenticated and comment.author == user %}
+      <a
+        role="button"
+        class="btn btn-sm btn-info float-right"
+        id="comment-{{ comment.pk }}-update-btn"
+        href="/blog/update_comment/{{ comment.pk }}/"
+        >수정</a
+      >
+      {% endif %}
       <h5 class="mt-0">
         {{ comment.author.username }} &nbsp;&nbsp;<small class="text-muted"
           >{{ comment.created }}</small
         >
       </h5>
       <p>{{ comment.content | linebreaks }}</p>
+      {% if comment.created != comment.modified %}
+      <p class="text-muted float-right">
+        <small>수정 일자: {{ comment.modified }}</small>
+      </p>
+      {% endif %}
     </div>
   </div>
   {% endfor %} {% endif %}
