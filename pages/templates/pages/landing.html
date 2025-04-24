@@ -1,16 +1,81 @@
 <!DOCTYPE html>
+{% load static %}
 <html lang="ko">
   <head>
-    <title>Landing Page</title>
+    <title>Djanlog</title>
+    <link
+      rel="stylesheet"
+      href="{% static 'blog/bootstrap.min.css' %}"
+      media="screen"
+    />
+    <link
+      rel="stylesheet"
+      href="{% static 'pages/landing.css' %}"
+      media="screen"
+    />
+    <script
+      src="https://kit.fontawesome.com/40a2024947.js"
+      crossorigin="anonymous"
+    ></script>
   </head>
 
   <body>
-    <nav>
-      <a href="/blog/">Blog</a>
-      <a href="/about_me">About Me</a>
-    </nav>
+    {% include 'blog/navbar.html' %}
 
-    <h1>안녕하세요. 노준석입니다.</h1>
-    <h2>Landing Page</h2>
+    <section>
+      <div class="container">
+        <div class="row justify-content-between">
+          <div class="col-lg-6 text-light">
+            <h1 class="mt-5">Djanlog</h1>
+            <p>Djanlog는 Django로 만든 블로그입니다.</p>
+          </div>
+          <div class="col-lg-5 mt-5">
+            <h2 class="text-light">최근 작성된 글</h2>
+            {% for post in recent_posts %}
+            <div class="card mt-1">
+              <div class="card-body">
+                <h6>
+                  <a
+                    href="{{ post.get_absolute_url }}"
+                    class="text-decoration-none text-dark"
+                    >{{ post.title }}</a
+                  >
+                </h6>
+                <span class="badge badge-pill badge-light float-right">
+                  <img
+                    class="mr-1 rounded-circle"
+                    width="20px"
+                    src="{{ post.get_avatar_url }}"
+                    alt=""
+                  />
+                  {{ post.author.username }}
+                  <!-- prettier ignore -->
+                  &nbsp;&nbsp;{{ post.created_at|date:"Y-m-d" }}
+                </span>
+              </div>
+            </div>
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="fixed-bottom">{% include 'blog/footer.html' %}</div>
+
+    <script
+      src="https://code.jquery.com/jquery-3.4.1.slim.min.js"
+      integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"
+      integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"
+      integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6"
+      crossorigin="anonymous"
+    ></script>
   </body>
 </html>
