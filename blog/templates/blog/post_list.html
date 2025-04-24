@@ -9,7 +9,10 @@
 >
 {% endif %} {% endif %}
 <h1>
-  Blog {% if category %}<span class="badge badge-secondary">{{ category }}</span
+  Blog {% if search_info %}<small class="text-muted">{{ search_info }}</small>
+  <!-- prettier ignore -->
+  {% endif %} {% if category %}<span class="badge badge-secondary"
+    >{{ category }}</span
   >{% endif %} {% if tag %}<span class="badge badge-light">
     <!-- prettier ignore -->
     <i class="fas fa-tags"></i>&nbsp;{{ tag }} ({{ tag.post_set.count}})</span
