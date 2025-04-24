@@ -1,5 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
+from markdownx.models import MarkdownxField
+from markdownx.utils import markdown
 import os
 
 class Tag(models.Model):
@@ -30,7 +32,7 @@ class Category(models.Model):
 class Post(models.Model):
     title = models.CharField(max_length=50)
     hook = models.CharField(max_length=100, blank=True)
-    content = models.TextField()
+    content = MarkdownxField()
     thumbnail = models.ImageField(upload_to='blog/images/%Y/%m/%d/', blank=True)
     upload = models.FileField(upload_to='blog/files/%Y/%m/%d', blank=True)
     created = models.DateTimeField(auto_now=True)
@@ -50,4 +52,7 @@ class Post(models.Model):
     
     def get_file_ext(self):
         return self.get_file_name().split('.')[-1]
+    
+    def get_content_markdown(self):
+        return markdown(self.content)
     

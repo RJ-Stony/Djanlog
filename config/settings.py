@@ -35,6 +35,7 @@ INSTALLED_APPS = [
     'pages',
     'crispy_forms',
     'crispy_bootstrap4',
+    'markdownx',
     
     'django.contrib.admin',
     'django.contrib.auth',
