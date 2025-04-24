@@ -71,11 +71,19 @@
             </header>
             <!-- Preview image figure-->
             <figure class="mb-4">
+              {% if post.thumbnail %}
               <img
-                class="img-fluid rounded"
+                class="card-img-top"
                 src="{{ post.thumbnail.url }}"
-                alt=""
+                alt="{{ post.title }} 썸네일"
               />
+              {% else %}
+              <img
+                class="card-img-top"
+                src="https://picsum.photos/seed/{{ post.id }}/800/200"
+                alt="랜덤 썸네일"
+              />
+              {% endif %}
             </figure>
             <!-- Post content-->
             <section class="mb-5">
