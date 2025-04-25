@@ -1,213 +1,229 @@
-{% extends 'blog/base.html' %} {% load crispy_forms_tags %}
-<!-- prettier-ignore -->
-{% block header_title %} 
-  {{ post.title }}
-{% endblock %}
+{% extends 'blog/base.html' %}
+{% load crispy_forms_tags %}
+{% load static %} {# static 태그 로드 추가 #}
 
-{% block main_area %}
-<div id="post-area">
-  {% if post.category %}
-  <span class="badge badge-secondary float-right">{{ post.category }}</span>
-  {% else %}
-  <span class="badge badge-secondary float-right">미분류</span>
-  {% endif %}
-  <!-- Post content-->
-  <article>
-    <!-- Post header-->
-    <header class="mb-4">
-      <!-- Post title-->
-      <h1 class="fw-bolder mb-1">{{ post.title }}</h1>
-      <h5 class="text-muted">{{ post.hook }}</h5>
-      <!-- Post meta content-->
-      <div class="text-muted fst-italic mb-2">
-        {{ post.created }}에 작성되었어요
-      </div>
-      <p class="lead"><a href="#">{{ post.author | upper }}</a></p>
-    </header>
-    <hr />
-    {% if user.is_authenticated and user == post.author %}
-    <a
-      class="btn btn-info btn-sm float-right mb-4"
-      href="/blog/update_post/{{ post.pk }}/"
-      role="button"
-      ><i class="fas fa-pen"></i>&nbsp;&nbsp;Post 수정</a
-    >
+{% block title %}{{ post.title }} - Blog{% endblock %} {# 페이지 타이틀을 base.html의 title 블록으로 이동 #}
 
+{% block content %} {# main_area 대신 content 블록 사용 #}
+  <div id="post-area">
+    {% if post.category %}
+      <span class="badge badge-secondary float-right">{{ post.category }}</span>
+    {% else %}
+      <span class="badge badge-secondary float-right">미분류</span>
     {% endif %}
-    <!-- Preview image figure-->
-    <figure class="mb-4">
-      {% if post.thumbnail %}
-      <img
-        class="card-img-top"
-        src="{{ post.thumbnail.url }}"
-        alt="{{ post.title }} 썸네일"
-      />
-      {% else %}
-      <img
-        class="card-img-top"
-        src="https://picsum.photos/seed/{{ post.id }}/800/200"
-        alt="랜덤 썸네일"
-      />
-      {% endif %}
-    </figure>
     <!-- Post content-->
-    <section class="mb-5">
-      <p class="fs-5 mb-4">{{ post.get_content_markdown | safe }}</p>
-
-      {% if post.tags.exists %}
-      <i class="fas fa-tags"></i>
-      {% for tag in post.tags.iterator %}
-      <a href="{{ tag.get_absolute_url }}"
-        ><span class="badge badge-pill badge-light">{{ tag }}</span></a
-      >
-      {% endfor %}
-      <br />
-      <br />
-      {% endif %} {% if post.upload %}
-      <a
-        href="{{ post.upload.url }}"
-        class="btn btn-outline-dark"
-        role="button"
-        download
-        >{% if post.get_file_ext == 'csv' %}
-        <i class="fa-solid fa-file-csv"></i>
-        {% elif post.get_file_ext == 'pdf' %}
-        <i class="fa-solid fa-file-pdf"></i>
-        <!-- prettier-ignore -->
-        {% elif post.get_file_ext == 'xlsx' or post.get_file_ext == 'xls' %}
-        <i class="fa-solid fa-file-excel"></i>
-        <!-- prettier-ignore -->
-        {% elif post.get_file_ext == 'docx' or post.get_file_ext == 'doc' %}
-        <i class="fa-solid fa-file-word"></i>
-        {% else %}
-        <i class="fa-solid fa-file"></i>
-        {% endif %} {{ post.get_file_name }}
-      </a>
-      {% endif %}
-    </section>
-  </article>
-  <hr />
-</div>
-<div id="comment-area">
-  <!-- Comments section-->
-  <section class="card my-4 mb-5">
-    <h5 class="card-header">댓글을 작성해주세요 !</h5>
-    <div class="card-body">
-      {% if user.is_authenticated %}
-      <form
-        id="comment-form"
-        method="POST"
-        action="{{ post.get_absolute_url }}new_comment/"
-      >
-        {% csrf_token %}
-        <div class="form-group">{{ comment_form | crispy }}</div>
-        <button type="submit" class="btn btn-primary float-right">작성</button>
-      </form>
-      {% else %}
-      <a
-        role="button"
-        class="btn btn-outline-dark btn-block btn-sm"
-        href="#"
-        data-toggle="modal"
-        data-target="#loginModal"
-        >먼저 로그인해주세요 !</a
-      >
-      {% endif %}
-    </div>
-  </section>
-
-  {% if post.comment_set.exists %}
-  <!-- prettier ignore -->
-  {% for comment in post.comment_set.iterator %}
-  <div class="media mb-4" id="comment-{{ comment.pk }}">
-    <img
-      class="d-flex mr-3 rounded-circle"
-      src="{{ comment.get_avatar_url }}"
-      alt="{{ comment.author }}"
-      width="60px"
-    />
-    <div class="media-body">
-      {% if user.is_authenticated and comment.author == user %}
-      <div class="float-right">
-        <a
-          role="button"
-          class="btn btn-sm btn-info"
-          id="comment-{{ comment.pk }}-update-btn"
-          href="/blog/update_comment/{{ comment.pk }}/"
-          >수정</a
-        >
-        <a
-          role="button"
-          href="#"
-          id="comment-{{ comment.pk }}-delete-modal-btn"
-          class="btn btn-sm btn-danger"
-          data-toggle="modal"
-          data-target="#deleteCommentModal-{{ comment.pk }}"
-          >삭제</a
-        >
-      </div>
-
-      <!-- Modal -->
-      <div
-        class="modal fade"
-        id="deleteCommentModal-{{ comment.pk }}"
-        tabindex="-1"
-        role="dialog"
-        aria-labelledby="deleteCommentModalLabel"
-        aria-hidden="true"
-      >
-        <div class="modal-dialog" role="document">
-          <div class="modal-content">
-            <div class="modal-header">
-              <h5 class="modal-title" id="deleteModalLabel">
-                이 댓글을 삭제할까요?
-              </h5>
-              <button
-                type="button"
-                class="close"
-                data-dismiss="modal"
-                aria-label="Close"
-              >
-                <span aria-hidden="true">&times;</span>
-              </button>
-            </div>
-            <div class="modal-body">
-              <del>{{ comment | linebreaks }}</del>
-            </div>
-            <div class="modal-footer">
-              <button
-                type="button"
-                class="btn btn-secondary"
-                data-dismiss="modal"
-              >
-                취소
-              </button>
-              <a
-                role="button"
-                class="btn btn-danger"
-                href="/blog/delete_comment/{{ comment.pk }}/"
-                >삭제</a
-              >
-            </div>
-          </div>
+    <article>
+      <!-- Post header-->
+      <header class="mb-4">
+        <!-- Post title-->
+        <h1 class="fw-bolder mb-1">{{ post.title }}</h1>
+        {% if post.hook %} {# hook이 있을 경우에만 표시 #}
+          <h5 class="text-muted">{{ post.hook }}</h5>
+        {% endif %}
+        <!-- Post meta content-->
+        <div class="text-muted fst-italic mb-2">
+          {{ post.created|date:"Y년 m월 d일 H:i" }} 에 작성되었어요 {# 날짜 형식 개선 #}
         </div>
-      </div>
-
-      {% endif %}
-      <h5 class="mt-0">
-        {{ comment.author.username }} &nbsp;&nbsp;<small class="text-muted"
-          >{{ comment.created }}</small
+        {# author 정보 표시 개선 #}
+        <p class="lead">작성자: <a href="#">{{ post.author | upper }}</a></p>
+      </header>
+      <hr />
+      {% if user.is_authenticated and user == post.author %}
+        <a
+          class="btn btn-info btn-sm float-right mb-4"
+          href="/blog/update_post/{{ post.pk }}/"
+          role="button"
+          ><i class="fas fa-pen"></i>&nbsp;&nbsp;Post 수정</a
         >
-      </h5>
-      <p>{{ comment.content | linebreaks }}</p>
-      {% if comment.created != comment.modified %}
-      <p class="text-muted float-right">
-        <small>수정 일자: {{ comment.modified }}</small>
-      </p>
       {% endif %}
-    </div>
+      <!-- Preview image figure-->
+      <figure class="mb-4">
+        {% if post.thumbnail %}
+          <img
+            class="img-fluid rounded" {# 이미지 반응형 및 스타일 개선 #}
+            src="{{ post.thumbnail.url }}"
+            alt="{{ post.title }} 썸네일"
+          />
+        {% else %}
+          <img
+            class="img-fluid rounded" {# 이미지 반응형 및 스타일 개선 #}
+            src="{% static 'pages/images/background.png' %}" {# 기본 이미지 사용 #}
+            alt="기본 이미지"
+          />
+        {% endif %}
+      </figure>
+      <!-- Post content-->
+      <section class="mb-5">
+        <div class="post-content"> {# 내용 감싸기 #}
+          {{ post.get_content_markdown | safe }}
+        </div>
+
+        {% if post.tags.exists %}
+          <div class="mt-4"> {# 태그 섹션 간격 추가 #}
+            <i class="fas fa-tags"></i>
+            {% for tag in post.tags.iterator %}
+              <a href="{{ tag.get_absolute_url }}"
+                ><span class="badge badge-pill badge-light">{{ tag }}</span></a
+              >
+            {% endfor %}
+          </div>
+        {% endif %}
+
+        {% if post.upload %}
+          <div class="mt-4"> {# 파일 다운로드 섹션 간격 추가 #}
+            <a
+              href="{{ post.upload.url }}"
+              class="btn btn-outline-dark"
+              role="button"
+              download
+            >
+              {% if post.get_file_ext == 'csv' %}
+                <i class="fas fa-file-csv"></i> {# Font Awesome 5 클래스 사용 #}
+              {% elif post.get_file_ext == 'pdf' %}
+                <i class="fas fa-file-pdf"></i> {# Font Awesome 5 클래스 사용 #}
+              {% elif post.get_file_ext == 'xlsx' or post.get_file_ext == 'xls' %}
+                <i class="fas fa-file-excel"></i> {# Font Awesome 5 클래스 사용 #}
+              {% elif post.get_file_ext == 'docx' or post.get_file_ext == 'doc' %}
+                <i class="fas fa-file-word"></i> {# Font Awesome 5 클래스 사용 #}
+              {% else %}
+                <i class="fas fa-file"></i> {# Font Awesome 5 클래스 사용 #}
+              {% endif %}
+              {{ post.get_file_name }}
+            </a>
+          </div>
+        {% endif %}
+      </section>
+    </article>
+    <hr />
   </div>
-  {% endfor %} {% endif %}
-</div>
-<hr />
+
+  <div id="comment-area">
+    <!-- Comments section-->
+    <section class="card my-4 mb-5">
+      <h5 class="card-header"><i class="fas fa-comments"></i> 댓글</h5> {# 아이콘 추가 #}
+      <div class="card-body">
+        {% if user.is_authenticated %}
+          <form
+            id="comment-form"
+            method="POST"
+            action="{{ post.get_absolute_url }}new_comment/"
+          >
+            {% csrf_token %}
+            <div class="form-group">{{ comment_form | crispy }}</div>
+            <button type="submit" class="btn btn-primary float-right">작성</button>
+          </form>
+        {% else %}
+          <a
+            role="button"
+            class="btn btn-outline-dark btn-block btn-sm"
+            href="#"
+            data-toggle="modal"
+            data-target="#loginModal"
+            >로그인 후 댓글을 작성할 수 있습니다.</a {# 안내 문구 수정 #}
+          >
+        {% endif %}
+      </div>
+    </section>
+
+    {% if post.comment_set.exists %}
+      <h5 class="mb-3">댓글 ({{ post.comment_set.count }})</h5> {# 댓글 수 표시 #}
+      {% for comment in post.comment_set.iterator %}
+        <div class="d-flex mb-4" id="comment-{{ comment.pk }}"> {# 미디어 객체 대신 flex 사용 #}
+          <div class="flex-shrink-0"> {# 아바타 영역 #}
+            <img
+              class="rounded-circle"
+              src="{{ comment.get_avatar_url }}"
+              alt="{{ comment.author }}"
+              width="60px"
+            />
+          </div>
+          <div class="ms-3 flex-grow-1"> {# 댓글 내용 영역 #}
+            <div class="fw-bold">
+              {{ comment.author.username }}
+              <small class="text-muted ms-2">{{ comment.created|date:"Y.m.d H:i" }}</small> {# 날짜 형식 개선 #}
+
+              {% if user.is_authenticated and comment.author == user %}
+                <div class="float-end"> {# 수정/삭제 버튼 오른쪽 정렬 #}
+                  <a
+                    role="button"
+                    class="btn btn-sm btn-info me-1" {# 버튼 간격 추가 #}
+                    id="comment-{{ comment.pk }}-update-btn"
+                    href="/blog/update_comment/{{ comment.pk }}/"
+                    >수정</a
+                  >
+                  <a
+                    role="button"
+                    href="#"
+                    id="comment-{{ comment.pk }}-delete-modal-btn"
+                    class="btn btn-sm btn-danger"
+                    data-toggle="modal"
+                    data-target="#deleteCommentModal-{{ comment.pk }}"
+                    >삭제</a
+                  >
+                </div>
+
+                <!-- Modal -->
+                <div
+                  class="modal fade"
+                  id="deleteCommentModal-{{ comment.pk }}"
+                  tabindex="-1"
+                  role="dialog"
+                  aria-labelledby="deleteCommentModalLabel-{{ comment.pk }}" {# 레이블 ID 고유하게 변경 #}
+                  aria-hidden="true"
+                >
+                  <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                      <div class="modal-header">
+                        <h5 class="modal-title" id="deleteModalLabel-{{ comment.pk }}"> {# 제목 ID 고유하게 변경 #}
+                          댓글 삭제 확인
+                        </h5>
+                        <button
+                          type="button"
+                          class="btn-close" {# Bootstrap 5 클래스 사용 #}
+                          data-dismiss="modal"
+                          aria-label="Close"
+                        ></button>
+                      </div>
+                      <div class="modal-body">
+                        <p><strong>작성자:</strong> {{ comment.author.username }}</p>
+                        <p><strong>내용:</strong></p>
+                        <blockquote class="border-start border-4 ps-3"> {# 인용구 스타일 적용 #}
+                          {{ comment.content | linebreaks }}
+                        </blockquote>
+                        <p class="text-danger mt-3">정말로 이 댓글을 삭제하시겠습니까?</p> {# 경고 문구 추가 #}
+                      </div>
+                      <div class="modal-footer">
+                        <button
+                          type="button"
+                          class="btn btn-secondary"
+                          data-dismiss="modal"
+                        >
+                          취소
+                        </button>
+                        <a
+                          role="button"
+                          class="btn btn-danger"
+                          href="/blog/delete_comment/{{ comment.pk }}/"
+                          >삭제</a
+                        >
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              {% endif %}
+            </div> {# fw-bold 끝 #}
+            <div class="mt-2"> {# 댓글 내용 위 간격 추가 #}
+              {{ comment.content | linebreaks }}
+            </div>
+            {% if comment.created != comment.modified %}
+              <div class="text-muted text-end mt-1"> {# 수정일자 오른쪽 정렬 및 간격 #}
+                <small> (수정됨: {{ comment.modified|date:"Y.m.d H:i" }})</small> {# 날짜 형식 개선 #}
+              </div>
+            {% endif %}
+          </div> {# 댓글 내용 영역 끝 #}
+        </div> {# d-flex 끝 #}
+      {% endfor %}
+    {% endif %}
+  </div>
+  <hr />
 {% endblock %}
