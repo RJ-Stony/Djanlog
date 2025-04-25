@@ -65,8 +65,6 @@ Djanlog는 Python 웹 프레임워크인 Django를 기반으로 구축된 개인
     pip install -r requirements.txt
     ```
 
-    _(참고: `requirements.txt` 파일이 없다면 `pip freeze > requirements.txt` 명령어로 생성해야 합니다.)_
-
 4.  **데이터베이스 마이그레이션:**
 
     ```bash
