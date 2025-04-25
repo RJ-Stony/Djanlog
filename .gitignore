@@ -104,5 +104,16 @@ logs/
 # Secrets and keys
 *.pem
 
+# Prettier configuration files
+.prettierrc
+.prettierrc.json
+.prettierrc.yml
+.prettierrc.yaml
+.prettierrc.js
+.prettierrc.cjs
+prettier.config.js
+prettier.config.cjs
+.prettierignore
+
 # Other
 *.log

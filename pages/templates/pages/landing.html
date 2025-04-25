@@ -50,13 +50,6 @@
             <div class="col-lg-6 hero-image" data-aos="fade-left">
               <div class="floating-shape shape-1"></div>
               <div class="floating-shape shape-2"></div>
-              <div class="image-container">
-                <img
-                  src="{% static 'pages/images/blog-illustration.svg' %}"
-                  alt="블로그 일러스트"
-                  onerror="this.src='https://via.placeholder.com/500x400?text=Djanlog'"
-                />
-              </div>
             </div>
           </div>
         </div>
@@ -87,7 +80,7 @@
                   />
                   {% else %}
                   <img
-                    src="https://via.placeholder.com/300x200?text=Djanlog"
+                    src="{% static 'pages/images/default-thumbnail.png' %}"
                     alt="기본 이미지"
                     class="post-thumbnail"
                   />
@@ -105,7 +98,7 @@
                     <div class="author-info">
                       <img
                         src="{{ post.get_avatar_url }}"
-                        alt="https://via.placeholder.com/50"
+                        alt="https://placehold.co/50"
                         class="avatar"
                       />
                       <span class="author-name"
